@@ -7,11 +7,11 @@ function App() {
   console.log(boxes);
 
   return (
-    <div className="flex w-screen justify-center items-center">
+    <div className="flex w-screen h-screen justify-center items-center">
       <div className="flex-col">
-        <BoxForm boxes={boxes} setBoxes={setBoxes} />
         <Canvas boxes={boxes} />
       </div>
+      <BoxForm boxes={boxes} setBoxes={setBoxes} />
     </div>
   );
 }
@@ -25,8 +25,8 @@ function Canvas({ boxes }) {
     const context = canvas.getContext("2d");
     boxes.forEach((box) => {
       context.beginPath();
-      context.fillStyle = randomColor();
-      context.strokeStyle = "black";
+      context.fillStyle = "black";
+      context.strokeStyle = "#0f0";
       context.rect(box.x, box.y, box.w, box.h);
       context.save();
       context.clip();
@@ -40,8 +40,8 @@ function Canvas({ boxes }) {
 
   return (
     <div>
-      <p>Boxes: {boxes.length}</p>
-      <p>Space Utilization: {parseFloat(fill * 100).toFixed(2)}%</p>
+      <div className="fixed top-0 left-0 p-2"><p>Boxes: {boxes.length}</p>
+        <p>Space Utilization: {parseFloat(fill * 100).toFixed(2)}%</p></div>
       <canvas ref={canvasRef} width={w} height={h}></canvas>
     </div>
   );
@@ -50,34 +50,53 @@ function Canvas({ boxes }) {
 function BoxForm({ boxes, setBoxes }) {
   const [boxWidth, setBoxWidth] = useState(0);
   const [boxHeight, setBoxHeight] = useState(0);
+  const [boxCount, setBoxCount] = useState(0);
+
   const addBoxHandler = (event) => {
     event.preventDefault();
-    const newBox = { w: parseInt(boxWidth), h: parseInt(boxHeight) };
-    setBoxes([...boxes, newBox]);
+    const newBoxes = [];
+    for (let i = 0; i < boxCount; i++) {
+      newBoxes.push({ w: parseFloat(boxWidth) * 50, h: parseFloat(boxHeight) * 50 })
+    }
+    setBoxes([...boxes, ...newBoxes]);
   };
+
   const clearBoxHandler = () => {
     setBoxes([]);
   };
+  
   return (
-    <form onSubmit={addBoxHandler}>
+    <form onSubmit={addBoxHandler} className="fixed bottom-0 p-4 space-x-2">
+      <label htmlFor="width">Width (cm):</label>
       <input
         className="w-20"
         type="number"
-        placeholder="Width"
+        step="0.01"
+        id="width"
         value={boxWidth}
         onChange={({ target }) => setBoxWidth(target.value)}
       />
+      <label htmlFor="height">Height (cm):</label>
       <input
         className="w-20"
         type="number"
-        placeholder="Height"
+        step="0.01"
+        id="height"
         value={boxHeight}
         onChange={({ target }) => setBoxHeight(target.value)}
       />
-      <button className="w-20" type="submit">
+      <label htmlFor="count">Count:</label>
+      <input
+        className="w-20"
+        type="number"
+        id="count"
+        value={boxCount}
+        onChange={({ target }) => setBoxCount(target.value)}
+      />
+      <button className="w-20 bg-slate-800" type="submit">
         Add
       </button>
-      <button className="w-20" type="button" onClick={clearBoxHandler}>
+      <button className="w-20 bg-slate-800" type="button" onClick={clearBoxHandler}>
         Clear
       </button>
     </form>

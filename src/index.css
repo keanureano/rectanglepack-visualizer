@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@layer base {
+    body {
+        @apply bg-black text-white h-screen w-screen
+    }
+    input {
+        @apply bg-slate-800 text-white pl-2
+    }
+}
